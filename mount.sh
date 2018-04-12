@@ -12,7 +12,6 @@ DIR="/media/$name"
 i=0
 if ! cat /proc/mounts | awk '{print $1}' | grep -q "$DEVNAME"
 then
-	echo "mount" >> /tmp/test.txt
 	while cat /proc/mounts | awk '{print $2}' | grep -q "$DIR" 
 	do
 		i=`expr $i + 1`
