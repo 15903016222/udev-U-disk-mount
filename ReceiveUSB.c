@@ -4,7 +4,7 @@
 #include <sys/ipc.h>
 #include <sys/types.h>
 #include <string.h>
-
+#include <fcntl.h>
 
 #define MSG_KEY     0x680068 //定义IPC消息key
 
@@ -20,13 +20,17 @@ typedef struct _umsg{
 	UMSGCONTENT content;
 }UMSG;
 
-void send_message (int status, void *buf, int size);
+void send_message (int status, int fd, void *buf, int size);
 
 int main(int argc, char *argv[]){
 	char cmd[512] = {0};
 	UMSG umsg = {0};
 	int msgid;
 	int status;
+	int fifofd;
+
+	mkfifo ("/tmp/fifo.txt", 0777);
+	fifofd = open ("/tmp/fifo.txt", O_RDWR);
 
 	if ((msgid = msgget(MSG_KEY,IPC_CREAT|0666))==-1) //取得IPC管道
 	  return 1;
@@ -44,12 +48,12 @@ int main(int argc, char *argv[]){
 				sprintf(cmd, "mount %s %s", 
 							umsg.content.szDevice, umsg.content.mountPath);
 				status = system(cmd);
-				send_message (status, &umsg.content, sizeof (umsg));
+				send_message (status, fifofd, &umsg.content, sizeof (umsg.content));
 			}
 			else if (!strncmp("remove", umsg.content.szAction, 6)) {
 				sprintf(cmd, "umount %s", umsg.content.mountPath);
 				status = system(cmd);
-				send_message (status, &umsg.content, sizeof (umsg));
+				send_message (status, fifofd, &umsg.content, sizeof (umsg.content));
 
 				sprintf(cmd, "rmdir %s", umsg.content.mountPath);
 				system(cmd);
@@ -60,7 +64,7 @@ int main(int argc, char *argv[]){
 	return 0;
 }
 
-void send_message (int status, void *buf, int size) {
+void send_message (int status, int fd, void *buf, int size) {
 	if (-1 == status) {
 		printf ("system ERROR \n");
 		return;
@@ -70,6 +74,7 @@ void send_message (int status, void *buf, int size) {
 		if (WIFEXITED (status)) {
 			if (0 == WEXITSTATUS(status)) { 
 				printf("run shell script successfully.\n");  
+				write (fd, buf, size);
 			}  
 			else {
 				printf("run shell script fail, script exit code: %d\n",
