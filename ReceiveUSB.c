@@ -70,19 +70,16 @@ void send_message (int status, int fd, void *buf, int size) {
 		return;
 	}
 	else {
-		printf ("status[%d] \n", status);
 		if (WIFEXITED (status)) {
 			if (0 == WEXITSTATUS(status)) { 
-				printf("run shell script successfully.\n");  
 				write (fd, buf, size);
 			}  
 			else {
-				printf("run shell script fail, script exit code: %d\n",
-							WEXITSTATUS(status));  
-			}  
+				;
+			}
 		}
 		else {
-			printf ("exit status = [%d]\n", WEXITSTATUS(status));
+			;
 		}
 	}
 
