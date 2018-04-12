@@ -10,8 +10,8 @@
 
 //定义IPC消息传送的内容
 typedef struct _msgcontent{
-    char szAction[512];   //USB产生的动作
-    char szDevice[512];   //USB设备名称
+    char mountAction[512];   //USB产生的动作
+    char mountDevice[512];   //USB设备名称
 	char mountPath[512];  //u盘挂载地址
 }UMSGCONTENT;
 
@@ -38,19 +38,11 @@ int main(int argc, char *argv[]){
     pMountDir = argv[1];        //取得挂载挂载目录
    
 	umsg.msgtype = 1;
-	strcpy(umsg.content.szAction,pAction);
-    strcpy(umsg.content.szDevice,pDevice);
+	strcpy(umsg.content.mountAction,pAction);
+    strcpy(umsg.content.mountDevice,pDevice);
     strcpy(umsg.content.mountPath,pMountDir);
     
 	msgsnd(msgid,&umsg,sizeof(UMSGCONTENT),IPC_NOWAIT);
     
-	char cmd[512];
-   	sprintf(cmd, "echo %s >> /tmp/send.txt", umsg.content.szDevice);
-   	system(cmd);
-   	sprintf(cmd, "echo %s >> /tmp/send.txt", umsg.content.szAction);
-   	system(cmd);
-   	sprintf(cmd, "echo %s >> /tmp/send.txt", umsg.content.mountPath);
-   	system(cmd);
-
 	return 0;
 }
