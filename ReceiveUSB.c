@@ -10,8 +10,8 @@
 
 //定义IPC消息传送的内容
 typedef struct _msgcontent{
-	char szAction[512];   //USB产生的动作
-	char szDevice[512];   //USB设备名称
+	char mountAction[512];   //USB产生的动作
+	char mountDevice[512];   //USB设备名称
 	char mountPath[512];  //u盘挂载地址
 }UMSGCONTENT;
 
@@ -44,13 +44,13 @@ int main(int argc, char *argv[]){
 		}
 		else {
 			printf("recive success\n");
-			if (!strncmp("add", umsg.content.szAction, 3)) {
+			if (!strncmp("add", umsg.content.mountAction, 3)) {
 				sprintf(cmd, "mount %s %s", 
-							umsg.content.szDevice, umsg.content.mountPath);
+							umsg.content.mountDevice, umsg.content.mountPath);
 				status = system(cmd);
 				send_message (status, fifofd, &umsg.content, sizeof (umsg.content));
 			}
-			else if (!strncmp("remove", umsg.content.szAction, 6)) {
+			else if (!strncmp("remove", umsg.content.mountAction, 6)) {
 				sprintf(cmd, "umount %s", umsg.content.mountPath);
 				status = system(cmd);
 				send_message (status, fifofd, &umsg.content, sizeof (umsg.content));
