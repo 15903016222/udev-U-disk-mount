@@ -6,7 +6,7 @@
 #include <string.h>
 
 
-#define MSG_KEY     0x780078 //定义IPC消息key
+#define MSG_KEY     0x680068 //定义IPC消息key
 
 //定义IPC消息传送的内容
 typedef struct _msgcontent{

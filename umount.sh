@@ -3,16 +3,13 @@
 MOUNT="/bin/mount"
 UMOUNT="/bin/umount"
 SEND="/usr/bin/send"
-RM="/bin/rm -rf"
 
 name=$1
 name=${name%_*}
 
-DIR="/media/$name"
-
 if cat /proc/mounts | awk '{print $1}' | grep -q "$DEVNAME"
 then
-	echo "umount" >> /tmp/test.txt
+	DIR=`cat /proc/mounts | grep "$DEVNAME" | awk '{print $2}'`
 	# 发送卸载信号
 	$SEND $DIR
 else
