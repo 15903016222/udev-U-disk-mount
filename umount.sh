@@ -2,18 +2,20 @@
 
 MOUNT="/bin/mount"
 UMOUNT="/bin/umount"
-RM="/bin/rm"
+SEND="/usr/bin/send"
+RM="/bin/rm -rf"
 
-if [ "remove" == $ACTION ]
+name=$1
+name=${name%_*}
+
+DIR="/media/$name"
+
+if cat /proc/mounts | awk '{print $1}' | grep -q "$DEVNAME"
 then
-	DEV_NAME=`cat /proc/mounts | grep "$DEVNAME" | awk '{print $1}'`
-	DIR=`cat /proc/mounts | grep "$DEVNAME" | awk '{print $2}'`
-
-	$UMOUNT $DEV_NAME
-	$RM $DIR
+	echo "umount" >> /tmp/test.txt
+	# 发送卸载信号
+	$SEND $DIR
+else
+	return
 fi
 
-echo "remove" >> /tmp/test.txt
-echo $DEVNAME >> /tmp/test.txt
-echo $DEV_NAME >> /tmp/test.txt
-echo $DIR >> /tmp/test.txt
