@@ -1,0 +1,15 @@
+# linux系统，通过udev实现U-disk的自动挂载与卸载
+
+本次项目的系统启动方式是system的启动方式。
+
+udev规则：10-doppler.rules U盘的的插入/拔出，执行的udev的规则文件
+
+mount.sh  插入U盘，Udev执行的脚本程序
+umount.sh 拔出U盘，udev执行的脚本程序
+
+由于在本文件系统udev环境下，执行mount挂载命令无效，但是在命令行单独执行mount
+可以正常的挂载U盘，所以使用，消息队列，进行两个进程通讯, 在SendUSB.c发现U盘
+，然后通知ReceiveUSB.c进行U盘挂载的执行操作
+
+fifo_send.c     \ 有名管道
+fifo_receive.c  / 编程实例
