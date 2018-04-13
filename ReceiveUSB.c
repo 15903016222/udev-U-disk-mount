@@ -29,8 +29,8 @@ int main(int argc, char *argv[]){
 	int status;
 	int fifofd;
 
-	mkfifo ("/tmp/fifo.txt", 0777);
-	fifofd = open ("/tmp/fifo.txt", O_RDWR);
+	mkfifo ("/tmp/.mountFifo", 0777);
+	fifofd = open ("/tmp/.mountFifo", O_RDWR);
 
 	if ((msgid = msgget(MSG_KEY,IPC_CREAT|0666))==-1) //取得IPC管道
 	  return 1;
