@@ -20,10 +20,10 @@ typedef struct _umsg{
 	UMSGCONTENT content;
 }UMSG;
 
+char cmd[512] = {0};
 void send_message (int status, int fd, void *buf, int size);
 
 int main(int argc, char *argv[]){
-	char cmd[512] = {0};
 	UMSG umsg = {0};
 	int msgid;
 	int status;
@@ -45,8 +45,11 @@ int main(int argc, char *argv[]){
 		else {
 			printf("recive success\n");
 			if (!strncmp("add", umsg.content.mountAction, 3)) {
-				sprintf(cmd, "mount %s %s", 
-							umsg.content.mountDevice, umsg.content.mountPath);
+				sprintf(cmd, "ntfs-3g %s %s || mount %s %s", 
+							umsg.content.mountDevice, 
+							umsg.content.mountPath, 
+							umsg.content.mountDevice, 
+							umsg.content.mountPath);
 				status = system(cmd);
 				send_message (status, fifofd, &umsg.content, sizeof (umsg.content));
 			}
@@ -67,6 +70,8 @@ int main(int argc, char *argv[]){
 void send_message (int status, int fd, void *buf, int size) {
 	if (-1 == status) {
 		printf ("system ERROR \n");
+		sprintf(cmd, "rmdir %s", ((UMSGCONTENT *)buf)->mountPath);
+		system(cmd);
 		return;
 	}
 	else {
@@ -75,11 +80,13 @@ void send_message (int status, int fd, void *buf, int size) {
 				write (fd, buf, size);
 			}  
 			else {
-				;
+				sprintf(cmd, "rmdir %s", ((UMSGCONTENT *)buf)->mountPath);
+				system(cmd);
 			}
 		}
 		else {
-			;
+			sprintf(cmd, "rmdir %s", ((UMSGCONTENT *)buf)->mountPath);
+			system(cmd);
 		}
 	}
 
