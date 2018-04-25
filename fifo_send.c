@@ -16,9 +16,9 @@ int main (int argc, char *argv[])
 {
 	int fd;
 	UMSGCONTENT umsg;
-	strcpy (&umsg.szAction, "add");
-	strcpy (&umsg.szDevice, "/dev/sda1");
-	strcpy (&umsg.mountPath, "/mnt");
+	strcpy ((char *)&umsg.szAction, "add");
+	strcpy ((char *)&umsg.szDevice, "/dev/sda1");
+	strcpy ((char *)&umsg.mountPath, "/mnt");
 
 	mkfifo ("/tmp/.mountFifo", 0777);
 	fd = open ("/tmp/.mountFifo", O_WRONLY);
